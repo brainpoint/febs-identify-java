@@ -32,7 +32,7 @@ public class MachineIdService extends BaseService {
 
     /**
      * Get a new machine id.
-     * @return
+     * @return machine id
      */
     public Long getNewMachineId() {
         SqlSession session = openSession();

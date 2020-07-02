@@ -8,10 +8,10 @@
     <artifactId>febs-identify</artifactId>
     <version>0.0.1</version>
     <packaging>jar</packaging>
-
+        
     <name>febs-identify</name>
     <url>https://github.com/brainpoint/febs-identify-java.git</url>
-    <description>Distributed unique identify like ObjectId.</description>
+    <description>Distributed Unique Identify like ObjectId.</description>
     <licenses>
         <license>
         <name>The MIT License</name>

@@ -6,7 +6,11 @@
  */
 package cn.brainpoint.febs.identify.dao;
 
-import org.apache.ibatis.annotations.*;
+import org.apache.ibatis.annotations.Insert;
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Options;
+import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Update;
 
 /**
  *
@@ -17,20 +21,11 @@ import org.apache.ibatis.annotations.*;
 @Mapper
 public interface IMachineIdMapperMysql {
 
-    /**
-     * Assure the table in database..
-     * @param tablename
-     */
     @Update("CREATE TABLE IF NOT EXISTS `${tablename}`(`id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, PRIMARY KEY (`id`)) " +
             "COLLATE='utf8_general_ci' " +
             "ENGINE=InnoDB;")
     void assureTable(@Param("tablename") String tablename);
 
-    /**
-     * Get new machine id.
-     * @param tablename
-     * @return
-     */
     @Insert("INSERT INTO `${tablename}`() VALUES()")
     @Options(useGeneratedKeys = true, keyProperty = "mod.id")
     void getNewId(@Param("tablename") String tablename, @Param("mod") MachineIdBean mod);

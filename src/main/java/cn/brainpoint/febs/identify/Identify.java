@@ -32,10 +32,10 @@ public class Identify {
     }
 
     /**
-     * Initialize with database configuration.
-     * @param machine_id
+     * Initialize with database configuration, and create a machine id.
+     * @param machine_id use this machine_id to make distributed unique id.
      */
-    public static void initializeWithMachineId(int machine_id) {
+    public static void initializeByMachineId(int machine_id) {
         if ((machine_id & 0xff000000) != 0 || machine_id == 0) {
             throw new IllegalArgumentException("The machine identifier must be between 1 and 16777215 (it must fit in three bytes).");
         }
@@ -49,9 +49,36 @@ public class Identify {
     }
 
     /**
-     * Initialize with database configuration.
+     * Initialize with database configuration, and create a machine id.
+     * @param config db config.
      */
-    public static void initialize(IdentifyCfg config) {
+    public static void initializeByDatabase(IdentifyCfg config) {
+        if (config != null) {
+            setupDatabase(config);
+        }
+
+        try {
+            machineId = generateNewMachineId();
+        } catch (DBException e) {
+            log.error(e.getMessage(), e);
+            System.exit(-1);
+        }
+
+        log.info(String.format(
+                "[febs] Machine ID: %s; Url: %s; Table: %s",
+                machineId,
+                Configuration.url,
+                Configuration.tablename));
+
+//        BaseService.destroy();
+    }
+
+    /**
+     * Setup database configuration, but don't create a machine_id.
+     * And then can call generateNewMachineId().
+     * @param config db config.
+     */
+    public static void setupDatabase(IdentifyCfg config) {
 
         if (config == null) {
             throw new IllegalArgumentException("config is null");
@@ -85,26 +112,11 @@ public class Identify {
         Configuration.retryCount = config.getRetryCount();
 
         BaseService.initialize(Configuration.driver, Configuration.url, Configuration.username, Configuration.password, connectTimeout);
-
-        try {
-            machineId = generateNewMachineId();
-        } catch (DBException e) {
-            log.error(e.getMessage(), e);
-            System.exit(-1);
-        }
-
-        log.info(String.format(
-                "[febs] Machine ID: %s; Url: %s; Table: %s",
-                machineId,
-                Configuration.url,
-                Configuration.tablename));
-
-//        BaseService.destroy();
     }
 
     /**
      * Get the current machine id.
-     * @return
+     * @return machine id.
      */
     public static int getMachineId() {
         return machineId;
@@ -112,7 +124,7 @@ public class Identify {
 
     /**
      * Generate a new machine id.
-     * @return
+     * @return a new machine id.
      */
     public static int generateNewMachineId() throws DBException {
         int machine_id = 0;
@@ -137,7 +149,7 @@ public class Identify {
 
     /**
      * Generate a new unique id (21size)
-     * @return
+     * @return distributed unique id
      */
     public static String nextId() {
         String id = ObjectId.generateHexNoPID(machineId).toUpperCase();
@@ -150,7 +162,7 @@ public class Identify {
     /**
      * Validator id.
      * @param ids id array.
-     * @return
+     * @return whether ids is valid.
      */
     public static boolean isValid(final String... ids) {
         for (int i = 0; i < ids.length; i++) {

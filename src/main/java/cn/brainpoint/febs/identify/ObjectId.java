@@ -27,7 +27,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  *         a 3-byte machineId, and
  *         a 3-byte counter, starting with a random value.
  *
- *         <no container pid, must to use database to manager machineId.>
+ *         &lt;no container pid, must to use database to manager machineId.&gt;
  *
  */
 public final class ObjectId {
@@ -61,6 +61,8 @@ public final class ObjectId {
      *         a 2-byte pid, and
      *         a 3-byte counter, starting with a random value.
      *
+     * @param machineId use this machine_id to make distributed unique id.
+     * @param pid use this pid.
      * @return objectID in hex string
      */
     public static String generateHex(final int machineId, final short pid) {
@@ -74,7 +76,8 @@ public final class ObjectId {
      *         a 4-byte value representing the seconds since the Unix epoch,
      *         a 3-byte machineId, and
      *         a 3-byte counter, starting with a random value.
-     *
+     * 
+     * @param machineId use this machine_id to make distributed unique id.
      * @return objectID (no container pid) in hex string
      */
     public static String generateHexNoPID(final int machineId) {
@@ -84,8 +87,11 @@ public final class ObjectId {
 
 
     private ObjectId(final Date date, final int machineId) {
-        if ((machineId & 0xff000000) != 0 || machineId == 0) {
+        if ((machineId & 0xff000000) != 0) {
             throw new IllegalArgumentException("The machine identifier must be between 1 and 16777215 (it must fit in three bytes).");
+        }
+        if (machineId == 0) {
+            throw new IllegalArgumentException("Need a machine id.");
         }
 
         int inc = NEXT_COUNTER.getAndIncrement();

@@ -1,8 +1,26 @@
-## Distributed Unique Identify.
+
+# Febs-identify
+
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/cn.brainpoint/febs-identify/badge.svg)](https://maven-badges.herokuapp.com/maven-central/cn.brainpoint/febs-identify/)
+[![License](https://img.shields.io/github/license/brainpoint/febs-identify-java)](https://opensource.org/licenses/MIT)
+
+Distributed Unique Identify.
 
 - like objectId, a process can generator id `2^24-1` per second.
 - Container `20` chars in id
 - Use database to assign unique machineId.
+
+## How to use
+
+maven config.
+
+```html
+<dependency>
+    <groupId>cn.brainpoint</groupId>
+    <artifactId>febs-identify</artifactId>
+    <version>0.0.1</version>
+</dependency>
+```
 
 Generate the ID using the following code:
 

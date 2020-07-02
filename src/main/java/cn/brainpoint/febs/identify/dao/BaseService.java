@@ -57,7 +57,7 @@ public class BaseService {
 
     /**
      * Open a session.
-     * @return
+     * @return sqlSession
      */
     public static SqlSession openSession() {
         return sqlSessionFactory.openSession();

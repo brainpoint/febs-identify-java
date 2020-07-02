@@ -37,7 +37,7 @@ public class IdentifyCfg {
      * @param url e.g. localhost:3306/xx
      * @param username the username of database.
      * @param password the password.
-     * @param tablename
+     * @param tablename where to store id.
      * @param retryCount retry to connect to database.
      * @param connectTimeout connect timeout in milliseconds.
      */
@@ -51,7 +51,6 @@ public class IdentifyCfg {
         this.connectTimeout = connectTimeout;
     }
 
-    /** db driver; e.g. com.mysql.jdbc.Driver **/
     public String getDriver() {
         if (this.type.equals("mysql")) {
             return "com.mysql.cj.jdbc.Driver";
@@ -59,7 +58,6 @@ public class IdentifyCfg {
         throw new RuntimeException("only support mysql");
     }
 
-    /** db url; e.g. jdbc:mysql://localhost:3306/xx **/
     public String getUri() {
         if (this.type.equals("mysql")) {
             return "jdbc:mysql://" + this.url;
