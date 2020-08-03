@@ -22,12 +22,11 @@ import java.util.Date;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * ObjectId no container PID:
- *         a 4-byte value representing the seconds since the Unix epoch,
- *         a 3-byte machineId, and
- *         a 3-byte counter, starting with a random value.
+ * ObjectId no container PID: a 4-byte value representing the seconds since the
+ * Unix epoch, a 3-byte machineId, and a 3-byte counter, starting with a random
+ * value.
  *
- *         &lt;no container pid, must to use database to manager machineId.&gt;
+ * &lt;no container pid, must to use database to manager machineId.&gt;
  *
  */
 public final class ObjectId {
@@ -37,15 +36,10 @@ public final class ObjectId {
 
     private static final int LOW_ORDER_THREE_BYTES = 0x00ffffff;
 
-    // Use primitives to represent the 5-byte random value.
-    private static final int RANDOM_VALUE1;
-    private static final short RANDOM_VALUE2;
-
     private static final AtomicInteger NEXT_COUNTER = new AtomicInteger(new SecureRandom().nextInt());
 
-    private static final char[] HEX_CHARS = new char[]{
-            '0', '1', '2', '3', '4', '5', '6', '7',
-            '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
+    private static final char[] HEX_CHARS = new char[] { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b',
+            'c', 'd', 'e', 'f' };
 
     private final int timestamp;
     private final int counter;
@@ -56,13 +50,12 @@ public final class ObjectId {
     /**
      * Generate a objectID in hex string.
      *
-     *         a 4-byte value representing the seconds since the Unix epoch,
-     *         a 3-byte machineId, and
-     *         a 2-byte pid, and
-     *         a 3-byte counter, starting with a random value.
+     * a 4-byte value representing the seconds since the Unix epoch, a 3-byte
+     * machineId, and a 2-byte pid, and a 3-byte counter, starting with a random
+     * value.
      *
      * @param machineId use this machine_id to make distributed unique id.
-     * @param pid use this pid.
+     * @param pid       use this pid.
      * @return objectID in hex string
      */
     public static String generateHex(final int machineId, final short pid) {
@@ -73,9 +66,8 @@ public final class ObjectId {
     /**
      * Generate a objectID (no container pid) in hex string.
      *
-     *         a 4-byte value representing the seconds since the Unix epoch,
-     *         a 3-byte machineId, and
-     *         a 3-byte counter, starting with a random value.
+     * a 4-byte value representing the seconds since the Unix epoch, a 3-byte
+     * machineId, and a 3-byte counter, starting with a random value.
      * 
      * @param machineId use this machine_id to make distributed unique id.
      * @return objectID (no container pid) in hex string
@@ -85,10 +77,10 @@ public final class ObjectId {
         return id.toHexString();
     }
 
-
     private ObjectId(final Date date, final int machineId) {
         if ((machineId & 0xff000000) != 0) {
-            throw new IllegalArgumentException("The machine identifier must be between 1 and 16777215 (it must fit in three bytes).");
+            throw new IllegalArgumentException(
+                    "The machine identifier must be between 1 and 16777215 (it must fit in three bytes).");
         }
         if (machineId == 0) {
             throw new IllegalArgumentException("Need a machine id.");
@@ -100,7 +92,7 @@ public final class ObjectId {
             inc = NEXT_COUNTER.getAndIncrement();
         }
 
-        this.timestamp = (int)(date.getTime() / 1000);
+        this.timestamp = (int) (date.getTime() / 1000);
         this.counter = inc & LOW_ORDER_THREE_BYTES;
         this.randomValue1 = machineId;
         this.randomValue2 = 0;
@@ -109,7 +101,8 @@ public final class ObjectId {
 
     private ObjectId(final Date date, final int machineId, final short pid) {
         if ((machineId & 0xff000000) != 0 || machineId == 0) {
-            throw new IllegalArgumentException("The machine identifier must be between 1 and 16777215 (it must fit in three bytes).");
+            throw new IllegalArgumentException(
+                    "The machine identifier must be between 1 and 16777215 (it must fit in three bytes).");
         }
 
         int inc = NEXT_COUNTER.getAndIncrement();
@@ -118,7 +111,7 @@ public final class ObjectId {
             inc = NEXT_COUNTER.getAndIncrement();
         }
 
-        this.timestamp = (int)(date.getTime() / 1000);
+        this.timestamp = (int) (date.getTime() / 1000);
         this.counter = inc & LOW_ORDER_THREE_BYTES;
         this.randomValue1 = machineId;
         this.randomValue2 = pid;
@@ -126,7 +119,8 @@ public final class ObjectId {
     }
 
     /**
-     * Convert to a byte array.  Note that the numbers are stored in big-endian order.
+     * Convert to a byte array. Note that the numbers are stored in big-endian
+     * order.
      *
      * @return the byte array
      */
@@ -134,20 +128,20 @@ public final class ObjectId {
         ByteBuffer buffer = null;
         if (this.noRandomValue2) {
             buffer = ByteBuffer.allocate(OBJECT_ID_LENGTH_NOPID);
-        }
-        else {
+        } else {
             buffer = ByteBuffer.allocate(OBJECT_ID_LENGTH);
         }
         putToByteBuffer(buffer);
-        return buffer.array();  // using .allocate ensures there is a backing array that can be returned
+        return buffer.array(); // using .allocate ensures there is a backing array that can be returned
     }
 
     /**
-     * Convert to bytes and put those bytes to the provided ByteBuffer.
-     * Note that the numbers are stored in big-endian order.
+     * Convert to bytes and put those bytes to the provided ByteBuffer. Note that
+     * the numbers are stored in big-endian order.
      *
      * @param buffer the ByteBuffer
-     * @throws IllegalArgumentException if the buffer is null or does not have at least 12 bytes remaining
+     * @throws IllegalArgumentException if the buffer is null or does not have at
+     *                                  least 12 bytes remaining
      * @since 3.4
      */
     public void putToByteBuffer(final ByteBuffer buffer) {
@@ -185,8 +179,7 @@ public final class ObjectId {
         char[] chars = null;
         if (this.noRandomValue2) {
             chars = new char[OBJECT_ID_LENGTH_NOPID * 2];
-        }
-        else {
+        } else {
             chars = new char[OBJECT_ID_LENGTH * 2];
         }
 
@@ -201,12 +194,6 @@ public final class ObjectId {
     @Override
     public String toString() {
         return toHexString();
-    }
-
-    static {
-        SecureRandom secureRandom = new SecureRandom();
-        RANDOM_VALUE1 = secureRandom.nextInt(0x01000000);
-        RANDOM_VALUE2 = (short) secureRandom.nextInt(0x00008000);
     }
 
     private static byte int3(final int x) {

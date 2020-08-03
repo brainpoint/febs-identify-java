@@ -33,23 +33,24 @@ public class Identify {
 
     /**
      * Initialize with database configuration, and create a machine id.
+     * 
      * @param machine_id use this machine_id to make distributed unique id.
      */
     public static void initializeByMachineId(int machine_id) {
         if ((machine_id & 0xff000000) != 0 || machine_id == 0) {
-            throw new IllegalArgumentException("The machine identifier must be between 1 and 16777215 (it must fit in three bytes).");
+            throw new IllegalArgumentException(
+                    "The machine identifier must be between 1 and 16777215 (it must fit in three bytes).");
         }
 
         machine_id %= 0xff000000;
-        log.info(String.format(
-                "[febs] Machine ID: %s;",
-                machine_id));
+        log.info(String.format("[febs] Machine ID: %s;", machine_id));
 
         machineId = machine_id;
     }
 
     /**
      * Initialize with database configuration, and create a machine id.
+     * 
      * @param config db config.
      */
     public static void initializeByDatabase(IdentifyCfg config) {
@@ -64,18 +65,16 @@ public class Identify {
             System.exit(-1);
         }
 
-        log.info(String.format(
-                "[febs] Machine ID: %s; Url: %s; Table: %s",
-                machineId,
-                Configuration.url,
+        log.info(String.format("[febs] Machine ID: %s; Url: %s; Table: %s", machineId, Configuration.url,
                 Configuration.tablename));
 
-//        BaseService.destroy();
+        // BaseService.destroy();
     }
 
     /**
-     * Setup database configuration, but don't create a machine_id.
-     * And then can call generateNewMachineId().
+     * Setup database configuration, but don't create a machine_id. And then can
+     * call generateNewMachineId().
+     * 
      * @param config db config.
      */
     public static void setupDatabase(IdentifyCfg config) {
@@ -83,23 +82,21 @@ public class Identify {
         if (config == null) {
             throw new IllegalArgumentException("config is null");
         }
-        if (config.getDriver() == null
-                || config.getUri() == null
-                || config.getPassword() == null
+        if (config.getDriver() == null || config.getUri() == null || config.getPassword() == null
                 || config.getUsername() == null) {
             throw new IllegalArgumentException("cfg is error");
         }
 
         String tablename = config.getTablename();
-        if (null != tablename) { tablename = tablename.trim(); }
-        
-        String dbTablename = tablename == null || tablename.length()==0 ? DEFAULT_TABLENAME : tablename;
+        if (null != tablename) {
+            tablename = tablename.trim();
+        }
+
+        String dbTablename = tablename == null || tablename.length() == 0 ? DEFAULT_TABLENAME : tablename;
         int connectTimeout = config.getConnectTimeout() <= 0 ? 5000 : config.getConnectTimeout();
 
-        if (dbTablename.equals(Configuration.tablename)
-                && config.getDriver().equals(Configuration.driver)
-                && config.getUri().equals(Configuration.url)
-                && config.getUsername().equals(Configuration.username)
+        if (dbTablename.equals(Configuration.tablename) && config.getDriver().equals(Configuration.driver)
+                && config.getUri().equals(Configuration.url) && config.getUsername().equals(Configuration.username)
                 && config.getPassword().equals(Configuration.password)) {
             return;
         }
@@ -111,11 +108,13 @@ public class Identify {
         Configuration.tablename = dbTablename;
         Configuration.retryCount = config.getRetryCount();
 
-        BaseService.initialize(Configuration.driver, Configuration.url, Configuration.username, Configuration.password, connectTimeout);
+        BaseService.initialize(Configuration.driver, Configuration.url, Configuration.username, Configuration.password,
+                connectTimeout);
     }
 
     /**
      * Get the current machine id.
+     * 
      * @return machine id.
      */
     public static int getMachineId() {
@@ -124,6 +123,7 @@ public class Identify {
 
     /**
      * Generate a new machine id.
+     * 
      * @return a new machine id.
      */
     public static int generateNewMachineId() throws DBException {
@@ -149,29 +149,34 @@ public class Identify {
 
     /**
      * Generate a new unique id (21size)
+     * 
      * @return distributed unique id
      */
     public static String nextId() {
-        String id = ObjectId.generateHexNoPID(machineId).toUpperCase();
+        String id = ObjectId.generateHexNoPID(machineId);
 
-        assert id.length() == ObjectId.OBJECT_ID_LENGTH_NOPID*2 : "generate objectID length != OBJECT_ID_LENGTH_noPID*2";
-        
+        assert id.length() == ObjectId.OBJECT_ID_LENGTH_NOPID
+                * 2 : "generate objectID length != OBJECT_ID_LENGTH_noPID*2";
+
         return id;
     }
 
     /**
      * Validator id.
+     * 
      * @param ids id array.
      * @return whether ids is valid.
      */
     public static boolean isValid(final String... ids) {
         for (int i = 0; i < ids.length; i++) {
             String id = ids[i];
-            if (null == id || id.length() != ID_LENGTH) { return false; }
+            if (null == id || id.length() != ID_LENGTH) {
+                return false;
+            }
 
             for (int j = 0; j < id.length(); j++) {
                 char c = id.charAt(j);
-                if (!((c >= '0' && c <= '9') || (c >= 'A' && c <= 'Z') )) {
+                if (!((c >= '0' && c <= '9') || (c >= 'a' && c <= 'z'))) {
                     return false;
                 }
             }

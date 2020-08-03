@@ -11,13 +11,20 @@ package cn.brainpoint.febs.identify.exception;
  * @date 2020/6/30 3:31 下午
  */
 public class DBException extends RuntimeException {
-    public DBException() { super(); }
+    private static final long serialVersionUID = 6650258781086723349L;
+
+    public DBException() {
+        super();
+    }
+
     public DBException(String message) {
         super(message);
     }
+
     public DBException(String message, Throwable cause) {
         super(message, cause);
     }
+
     public DBException(Throwable cause) {
         super(cause);
     }
