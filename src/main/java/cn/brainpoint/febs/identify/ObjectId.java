@@ -41,6 +41,8 @@ public final class ObjectId {
     private static final char[] HEX_CHARS = new char[] { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b',
             'c', 'd', 'e', 'f' };
 
+    private static long preTimestamp = 0;
+
     private final int timestamp;
     private final int counter;
     private final int randomValue1;
@@ -78,9 +80,15 @@ public final class ObjectId {
     }
 
     private ObjectId(final Date date, final int machineId) {
+
+        if (ObjectId.preTimestamp > date.getTime()) {
+            throw new IllegalArgumentException("The 'date' must bigger then pre-time.");
+        }
+        ObjectId.preTimestamp = date.getTime();
+
         if ((machineId & 0xff000000) != 0) {
             throw new IllegalArgumentException(
-                    "The machine identifier must be between 1 and 16777215 (it must fit in three bytes).");
+                    "The machine identifier must be between 0 and 16777214 (it must fit in three bytes).");
         }
         if (machineId == 0) {
             throw new IllegalArgumentException("Need a machine id.");
@@ -100,9 +108,15 @@ public final class ObjectId {
     }
 
     private ObjectId(final Date date, final int machineId, final short pid) {
-        if ((machineId & 0xff000000) != 0 || machineId == 0) {
+
+        if (ObjectId.preTimestamp > date.getTime()) {
+            throw new IllegalArgumentException("The 'date' must bigger then pre-time.");
+        }
+        ObjectId.preTimestamp = date.getTime();
+        
+        if ((machineId & 0xff000000) != 0) {
             throw new IllegalArgumentException(
-                    "The machine identifier must be between 1 and 16777215 (it must fit in three bytes).");
+                    "The machine identifier must be between 0 and 16777214 (it must fit in three bytes).");
         }
 
         int inc = NEXT_COUNTER.getAndIncrement();

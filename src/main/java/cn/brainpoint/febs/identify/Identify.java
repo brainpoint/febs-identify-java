@@ -37,12 +37,12 @@ public class Identify {
      * @param machine_id use this machine_id to make distributed unique id.
      */
     public static void initializeByMachineId(int machine_id) {
-        if ((machine_id & 0xff000000) != 0 || machine_id == 0) {
-            throw new IllegalArgumentException(
-                    "The machine identifier must be between 1 and 16777215 (it must fit in three bytes).");
-        }
+        // if ((machine_id & 0xff000000) != 0 || machine_id == 0) {
+        //     throw new IllegalArgumentException(
+        //             "The machine identifier must be between 0 and 16777214 (it must fit in three bytes).");
+        // }
 
-        machine_id %= 0xff000000;
+        machine_id %= 0x00ffffff;
         log.info(String.format("[febs] Machine ID: %s;", machine_id));
 
         machineId = machine_id;
@@ -144,11 +144,11 @@ public class Identify {
             }
         } while (--retryCount >= 0);
 
-        return machine_id %= 0xff000000;
+        return machine_id %= 0x00ffffff;
     }
 
     /**
-     * Generate a new unique id (21size)
+     * Generate a new unique id (20size)
      * 
      * @return distributed unique id
      */
