@@ -60,7 +60,7 @@ public class IdentifyCfg {
 
     public String getUri() {
         if (this.type.equals("mysql")) {
-            return "jdbc:mysql://" + this.url;
+            return "jdbc:mysql://" + this.url + "?autoReconnect=true&autoReconnectForPools=true";
         }
         throw new RuntimeException("only support mysql");
     }
