@@ -9,7 +9,9 @@ package cn.brainpoint.febs.identify.dao;
 import org.apache.ibatis.session.SqlSession;
 
 import cn.brainpoint.febs.identify.Identify;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class MachineIdService extends BaseService {
 
     public MachineIdService() {
@@ -24,6 +26,9 @@ public class MachineIdService extends BaseService {
             IMachineIdMapperMysql mapper = session.getMapper(IMachineIdMapperMysql.class);
             mapper.assureTable(Identify.Configuration.getTablename());
             session.commit();
+        }
+        catch (Exception e) {
+            log.error("[febs identity] db connect in assureTable: " + e.getMessage());
         }
         finally {
             session.close();
@@ -44,6 +49,9 @@ public class MachineIdService extends BaseService {
             session.commit();
 
             id = mod.getId();
+        }
+        catch (Exception e) {
+            log.error("[febs identity] db connect in getNewMachineId: " + e.getMessage());
         }
         finally {
             session.close();
